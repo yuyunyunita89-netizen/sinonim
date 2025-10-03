@@ -1,6 +1,10 @@
-# Aplikasi Kuis Pilihan Ganda Bahasa Inggris (5 Soal)
+import streamlit as st
 
 def quiz():
+    st.title("📘 English Multiple Choice Quiz")
+    st.write("Answer the following 5 questions:")
+
+    # Daftar soal
     questions = [
         {
             "question": "1. What is the synonym of 'Happy'?",
@@ -28,29 +32,41 @@ def quiz():
             "answer": "a"
         }
     ]
-    
-    score = 0
-    
-    for q in questions:
-        print("\n" + q["question"])
-        for choice in q["choices"]:
-            print(choice)
-        answer = input("Your answer (a/b/c/d): ").lower()
-        
-        if answer == q["answer"]:
-            print("✅ Correct!")
-            score += 1
-        else:
-            print(f"❌ Wrong! The correct answer is {q['answer']}")
-    
-    print("\n=== RESULT ===")
-    print(f"Your Score: {score} / {len(questions)}")
-    if score == 5:
-        print("Excellent! 🎉")
-    elif score >= 3:
-        print("Good job! 👍")
-    else:
-        print("Keep practicing! 💪")
 
-# Jalankan program
+    # Simpan jawaban user
+    user_answers = []
+
+    for i, q in enumerate(questions):
+        st.write(f"**{q['question']}**")
+        answer = st.radio(
+            f"Choose your answer for question {i+1}:",
+            q["choices"],
+            index=None,
+            key=f"q{i}"
+        )
+        user_answers.append(answer)
+
+    # Tombol submit
+    if st.button("Submit Quiz"):
+        score = 0
+        for i, q in enumerate(questions):
+            correct_choice = q["choices"][ord(q["answer"]) - ord('a')]
+            if user_answers[i] == correct_choice:
+                st.success(f"Q{i+1}: Correct ✅")
+                score += 1
+            else:
+                st.error(f"Q{i+1}: Wrong ❌ (Correct: {correct_choice})")
+
+        st.write("### 📊 RESULT")
+        st.write(f"Your Score: **{score} / {len(questions)}**")
+
+        if score == 5:
+            st.balloons()
+            st.success("Excellent! 🎉")
+        elif score >= 3:
+            st.info("Good job! 👍")
+        else:
+            st.warning("Keep practicing! 💪")
+
+# Jalankan quiz
 quiz()
